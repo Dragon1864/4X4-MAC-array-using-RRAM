@@ -1,4 +1,5 @@
 // VerilogA for project, rram_custom, veriloga
+// A custom Verilog-A RRAM model inspired by the Stanford gap-based compact model
 
 `include "constants.vams"
 `include "disciplines.vams"
