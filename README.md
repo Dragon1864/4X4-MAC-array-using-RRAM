@@ -39,6 +39,7 @@ The 4×4 crossbar consists of:
 * 4 rows (input voltages)
 * 4 columns (output currents)
 * 16 RRAM cells (programmable weights)
+---
 
           Col1      Col2      Col3      Col4
            │         │         │         │
