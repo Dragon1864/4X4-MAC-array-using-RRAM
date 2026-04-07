@@ -40,15 +40,15 @@ The 4×4 crossbar consists of:
 * 4 columns (output currents)
 * 16 RRAM cells (programmable weights)
   
-          Col1      Col2      Col3      Col4
-           │         │         │         │
-Row1 ──   R11  ──   R12  ──   R13  ──   R14
-           │         │         │         │
-Row2 ──   R21  ──   R22  ──   R23  ──   R24
-           │         │         │         │
-Row3 ──   R31  ──   R32  ──   R33  ──   R34
-           │         │         │         │
-Row4 ──   R41  ──   R42  ──   R43  ──   R44
+           Col1     Col2     Col3     Col4
+            |        |        |        |
+Row1 ----  R11 ---- R12 ---- R13 ---- R14
+            |        |        |        |
+Row2 ----  R21 ---- R22 ---- R23 ---- R24
+            |        |        |        |
+Row3 ----  R31 ---- R32 ---- R33 ---- R34
+            |        |        |        |
+Row4 ----  R41 ---- R42 ---- R43 ---- R44
 
 ## Circuit Implementation
 
