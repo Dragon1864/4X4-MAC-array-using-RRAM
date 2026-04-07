@@ -1,0 +1,97 @@
+// VerilogA for project, rram_custom, veriloga
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+module rram_custom(TE,BE);
+
+
+inout TE, BE;
+electrical TE, BE;
+
+// ================= PARAMETERS =================
+
+// Physical constants
+parameter real g0      = 0.25e-9;   // tunneling length
+parameter real V0      = 0.25;      // IV fitting
+parameter real I0      = 1e-3;      // current scale
+parameter real Ea      = 0.3;       // activation energy (eV)
+parameter real vel0    = 1000;        // velocity factor
+parameter real gamma0  = 25;        // field enhancement
+parameter real beta    = 0.8;
+
+// Gap limits
+parameter real gap_min = 0.2e-9;
+parameter real gap_max = 1.7e-9;
+parameter real gap_ini = 1.2e-9;
+
+// Thermal
+parameter real Rth     = 2e3;
+parameter real T0      = 300;
+
+// Time control
+parameter real dt_max  = 1e-9;
+
+// ================= INTERNAL VARIABLES =================
+
+real Vtb, Itb;
+real gap;
+real Tcur;
+real gamma;
+real gap_ddt;
+
+// ================= SAFE FUNCTIONS =================
+
+
+function real limsinh;
+    input x;
+	real x;
+    begin
+        if (x > 50) limsinh = sinh(50);
+        else if (x < -50) limsinh = sinh(-50);
+        else limsinh = sinh(x);
+    end
+endfunction
+
+// ================= ANALOG BLOCK =================
+
+analog begin
+
+    // timestep control
+    $bound_step(dt_max);
+
+    // terminal voltage/current
+    Vtb = V(TE, BE);
+    Itb = I(TE, BE);
+
+    // self-heating
+    Tcur = T0 + abs(Vtb * Itb * Rth);
+    if (Tcur > 1200) Tcur = 1200;
+
+    // field enhancement
+    gamma = gamma0 - beta * pow(gap/1e-9, 3);
+    if (gamma < 0) gamma = 0;
+
+    // gap dynamics
+    gap_ddt =
+        - vel0
+        * limexp(-Ea*`P_Q/(`P_K*Tcur))
+        * limsinh(gamma * Vtb / Tcur);
+
+    // integrate state
+    gap = idt(gap_ddt, gap_ini);
+
+    // hard limits
+    if (gap < gap_min) gap = gap_min;
+    if (gap > gap_max) gap = gap_max;
+
+    // current equation
+    Itb = I0 * limexp(-gap/g0) * limsinh(Vtb/V0);
+
+    I(TE, BE) <+ Itb;
+
+end
+
+endmodule
+
+
